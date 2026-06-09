@@ -7,7 +7,6 @@ from typing import cast
 
 from textual.app import ComposeResult
 from textual.containers import Vertical
-from textual.screen import Screen
 from textual.timer import Timer
 from textual.widgets import Static
 
@@ -22,7 +21,7 @@ from kimi_terminal.widgets.header import KimiHeader
 from kimi_terminal.widgets.quote_table import QuoteTable
 
 
-class DashboardScreen(Screen):
+class DashboardScreen(Vertical):
     def __init__(self, config: ConfigManager, api: KimiApiClient) -> None:
         super().__init__()
         self.config = config
@@ -30,17 +29,33 @@ class DashboardScreen(Screen):
         self.watchlist = WatchlistService(config)
         self.refresh_timer: Timer | None = None
 
+    DEFAULT_CSS = """
+    DashboardScreen {
+        layout: vertical;
+        height: 100%;
+    }
+    DashboardScreen QuoteTable {
+        height: 1fr;
+    }
+    DashboardScreen #help {
+        height: auto;
+    }
+    """
+
     def compose(self) -> ComposeResult:
         yield KimiHeader("Dashboard [D] | Watchlist")
-        with Vertical():
-            yield QuoteTable()
-            yield Static("快捷键: Enter 详情 | a 添加 | d 删除 | : 命令 | q 退出", id="help")
+        yield QuoteTable()
+        yield Static("快捷键: Enter 详情 | a 添加 | d 删除 | : 命令 | q 退出", id="help")
         yield KimiFooter()
 
     async def on_mount(self) -> None:
         await self._refresh()
         interval = self.config.load_config().refresh_interval_seconds
         self.refresh_timer = self.set_interval(interval, self._refresh)
+
+    def on_unmount(self) -> None:
+        if self.refresh_timer:
+            self.refresh_timer.stop()
 
     async def _refresh(self) -> None:
         footer = self.query_one(KimiFooter)
@@ -126,11 +141,4 @@ class DashboardScreen(Screen):
             return
         self.app.handle_command(result)
 
-    def on_screen_resume(self) -> None:
-        if self.refresh_timer is None or self.refresh_timer._stopped:
-            interval = self.config.load_config().refresh_interval_seconds
-            self.refresh_timer = self.set_interval(interval, self._refresh)
 
-    def on_screen_suspend(self) -> None:
-        if self.refresh_timer:
-            self.refresh_timer.stop()

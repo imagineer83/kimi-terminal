@@ -17,7 +17,10 @@ from kimi_terminal.widgets.command_input import CommandInput
 
 class KimiTerminalApp(App):
     CSS = """
-    Screen { align: center middle; }
+    Screen {
+        layout: vertical;
+        align: left top;
+    }
     """
 
     def __init__(self, config_dir: str | None = None) -> None:

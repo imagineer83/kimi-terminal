@@ -14,14 +14,11 @@ class KimiFooter(Static):
     }
     """
 
-    def compose(self):
-        yield Static(self.status)
+    def __init__(self) -> None:
+        super().__init__("Ready")
 
     def watch_status(self, status: str) -> None:
-        try:
-            self.query_one(Static).update(status)
-        except Exception:
-            pass
+        self.update(status)
 
     def set_status(self, message: str) -> None:
         self.status = message

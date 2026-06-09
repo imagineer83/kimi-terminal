@@ -1,3 +1,4 @@
+from rich.text import Text
 from textual.widgets import DataTable
 
 from kimi_terminal.models import RealtimeQuote
@@ -24,5 +25,9 @@ class QuoteTable(DataTable):
                 "",
             )
             row_idx = self.row_count - 1
-            self.update_cell_at((row_idx, 3), fmt_change(q.change), style=change_color)
-            self.update_cell_at((row_idx, 4), fmt_pct(q.change_pct), style=change_color)
+            self.update_cell_at(
+                (row_idx, 3), Text(fmt_change(q.change), style=change_color)
+            )
+            self.update_cell_at(
+                (row_idx, 4), Text(fmt_pct(q.change_pct), style=change_color)
+            )

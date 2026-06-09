@@ -13,13 +13,9 @@ class KimiHeader(Static):
     """
 
     def __init__(self, title: str = "Kimi Terminal") -> None:
-        super().__init__()
+        super().__init__(title)
         self.title = title
-
-    def compose(self):
-        yield Static(self.title)
 
     def update_title(self, title: str) -> None:
         self.title = title
-        static = self.query_one(Static)
-        static.update(title)
+        self.update(title)
