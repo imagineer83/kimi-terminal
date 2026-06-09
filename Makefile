@@ -1,19 +1,20 @@
-.PHONY: install test lint run clean
+VENV=.venv
+PYTHON=$(VENV)/bin/python
+PIP=$(VENV)/bin/pip
+PYTEST=$(VENV)/bin/pytest
+
+.PHONY: install test run lint clean
 
 install:
-	pip install -e ".[dev]"
+	python3 -m venv $(VENV)
+	$(PIP) install -e ".[dev]"
 
 test:
-	pytest tests/ -v
-
-lint:
-	ruff check kimi_terminal tests
-	mypy kimi_terminal
+	$(PYTEST) tests/ -v
 
 run:
-	python -m kimi_terminal
+	$(PYTHON) -m kimi_terminal.cli
 
 clean:
-	rm -rf build/ dist/ *.egg-info .pytest_cache .mypy_cache .ruff_cache
+	rm -rf $(VENV) build dist *.egg-info .pytest_cache .mypy_cache
 	find . -type d -name __pycache__ -exec rm -rf {} +
-	find . -type f -name "*.pyc" -delete
