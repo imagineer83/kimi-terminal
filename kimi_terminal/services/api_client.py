@@ -58,7 +58,7 @@ class KimiApiClient:
 
     async def _call(self, method: str, params: dict[str, Any]) -> Any:
         token = self._token_header()
-        async with httpx.AsyncClient(timeout=REQUEST_TIMEOUT) as client:
+        async with httpx.AsyncClient(timeout=REQUEST_TIMEOUT, trust_env=False) as client:
             response = await client.post(
                 self.base_url,
                 headers={
