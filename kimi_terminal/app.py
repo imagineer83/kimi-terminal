@@ -74,8 +74,11 @@ class KimiTerminalApp(App):
     def action_command(self) -> None:
         self.push_screen(CommandInput(":"), self.handle_command)
 
+    def action_dashboard(self) -> None:
+        self.pop_screen_until("dashboard")
+
     BINDINGS = [
-        ("f1", "push_screen('dashboard')", "Dashboard"),
+        ("f1", "dashboard", "Dashboard"),
         ("f2", "action_command", "Command"),
         ("q", "quit", "Quit"),
         ("colon", "action_command", "Command"),
